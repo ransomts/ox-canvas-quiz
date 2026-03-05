@@ -1,0 +1,98 @@
+#+TITLE: Sorting Algorithms
+
+* Instructor Notes                                                 :noexport:
+
+This file demonstrates question bank export with =ox-canvas-quiz.el=.
+Export with ~C-c C-e Q b~ (=.md=) or ~C-c C-e Q B~ (=.zip=).
+
+The =#+TITLE:= becomes the question bank name in Canvas.  After
+importing the =.zip=, create a quiz in Canvas and add question groups
+that pull from this bank.
+
+Unlike quiz export, question bank export:
+- Uses =Question Bank Title:= instead of =Quiz Title:=
+- Produces all questions as standalone (no GROUP blocks)
+- Ignores =#+QUIZ_SHUFFLE:= (shuffle is configured per-quiz in Canvas)
+
+See =00-demo-all-question-types.org= for a quiz export demo.
+
+* Fundamentals
+
+** Bubble Sort Complexity
+What is the worst-case time complexity of bubble sort?
+   - [ ] $O(n)$
+   - [ ] $O(n \log n)$
+   - [X] $O(n^2)$
+   - [ ] $O(\log n)$
+
+** Stable Sort Definition
+:PROPERTIES:
+:Feedback: Stability means equal elements keep their original order.
+:END:
+A sorting algorithm is called "stable" when:
+   - [ ] It always runs in $O(n \log n)$ time.
+   - [X] Equal elements retain their relative order from the input.
+   - [ ] It uses no extra memory beyond the input array.
+   - [ ] It can sort any data type without a comparator.
+
+** In-Place Sorts
+:PROPERTIES:
+:Feedback: In-place algorithms use $O(1)$ extra space (ignoring recursion stack).
+:END:
+Which of the following sorting algorithms are in-place? /Select all that apply./
+   - [X] Insertion sort
+   - [ ] Merge sort
+   - [X] Quicksort
+   - [X] Selection sort
+   - [ ] Counting sort
+
+* Divide and Conquer
+
+** Merge Sort Recurrence
+:PROPERTIES:
+:Type: ShortAnswer
+:IncorrectFeedback: Think about how merge sort divides the array and the cost of merging.
+:END:
+What is the time complexity of merge sort in all cases?
+   - O(n log n)
+   - O(n*log(n))
+   - O(nlogn)
+
+** Quicksort Pivot
+Why does the choice of pivot affect quicksort's performance?
+
+A poor pivot (e.g., always the smallest element) creates unbalanced partitions, degrading to $O(n^2)$ time.
+   - [X] Unbalanced partitions cause more recursive calls and comparisons.
+   - [ ] The pivot is always swapped to the end, adding overhead.
+   - [ ] A bad pivot forces the algorithm to switch to insertion sort.
+   - [ ] Pivot choice only matters for stability, not performance.
+
+** Partition Count
+:PROPERTIES:
+:Type: Numerical
+:Answer: 4
+:Tolerance: 0
+:Feedback: Each call to partition places one element in its final position.
+:END:
+Quicksort is called on a 5-element array. How many times is the partition function called before the base case is reached?
+
+* Analysis
+
+** Best Sorting Algorithm
+:PROPERTIES:
+:Type: Essay
+:Feedback: A strong answer will discuss input characteristics such as size, pre-sortedness, and memory constraints.
+:END:
+There is no single "best" sorting algorithm for every situation. Describe a scenario where insertion sort outperforms quicksort, and explain why.
+
+** Comparison Lower Bound
+:PROPERTIES:
+:Points: 3
+:CorrectFeedback: Correct -- a decision tree with $n!$ leaves requires at least $\log_2(n!)$ comparisons.
+:IncorrectFeedback: Consider the decision tree model for comparison-based sorting.
+:END:
+What is the theoretical lower bound on comparisons for any comparison-based sorting algorithm?
+   - [ ] $O(n)$
+   - [X] $O(n \log n)$
+   - [ ] $O(n^2)$
+   - [ ] $O(\log n)$

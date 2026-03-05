@@ -1,0 +1,292 @@
+#+TITLE: ox-canvas-quiz
+#+OPTIONS: toc:2
+
+An Emacs Org mode export backend that converts quizzes written in Org
+into the [[https://github.com/gpoore/text2qti][text2qti]] Markdown format for import into Canvas LMS.  Supports
+exporting as a ready-to-use quiz or as a question bank that you can
+draw from when building quizzes in Canvas.
+
+Write your quizzes using Org's native outline structure, checkboxes,
+and property drawers instead of remembering text2qti's Markdown
+syntax.  The exporter handles formatting, question numbering, answer
+grouping, and multi-paragraph indentation automatically.
+
+* Requirements
+
+- Emacs 27+ with Org mode
+- [[https://github.com/gpoore/text2qti][text2qti]] (only needed for direct =.zip= export)
+
+* Installation
+
+Copy =ox-canvas-quiz.el= somewhere on your ~load-path~ and add to
+your init file:
+
+#+begin_src elisp
+(require 'ox-canvas-quiz)
+#+end_src
+
+* Quick Start
+
+Create an Org file like this:
+
+#+begin_example
+,#+TITLE: My First Quiz
+
+,* Questions
+
+,** What color is the sky?
+   - [ ] Green
+   - [X] Blue
+   - [ ] Red
+
+,** Name the largest ocean.
+:PROPERTIES:
+:Type: ShortAnswer
+:END:
+   - Pacific
+   - Pacific Ocean
+#+end_example
+
+Then export as a quiz:
+
+- ~C-c C-e Q q~ --- export quiz to =.md= (text2qti Markdown)
+- ~C-c C-e Q z~ --- export quiz to =.zip= (QTI package via text2qti,
+  ready for Canvas import)
+
+Or as a question bank:
+
+- ~C-c C-e Q b~ --- export question bank to =.md=
+- ~C-c C-e Q B~ --- export question bank to =.zip= (QTI package via
+  text2qti)
+
+From the command line:
+
+#+begin_src sh
+# Quiz
+emacs --batch quiz.org -l ox-canvas-quiz.el -f org-canvas-quiz-export-to-md-batch
+emacs --batch quiz.org -l ox-canvas-quiz.el -f org-canvas-quiz-export-to-qti-batch
+
+# Question bank
+emacs --batch quiz.org -l ox-canvas-quiz.el -f org-canvas-quiz-export-to-bank-md-batch
+emacs --batch quiz.org -l ox-canvas-quiz.el -f org-canvas-quiz-export-to-bank-qti-batch
+#+end_src
+
+* Writing Quizzes
+
+** File-Level Settings
+
+#+begin_example
+,#+TITLE: Midterm Exam
+,#+QUIZ_SHUFFLE: yes
+#+end_example
+
+~#+TITLE:~ sets the Canvas quiz title.  ~#+QUIZ_SHUFFLE: yes~
+randomizes answer order for all questions.
+
+** Question Structure
+
+Each *level-2 headline* (=**=) is a question.  The headline text
+becomes the question title in Canvas.  The body paragraphs below it
+are the question stem.
+
+#+begin_example
+,* Unit 3
+,** Gradient Descent
+What does gradient descent minimize?
+   - [ ] The number of features
+   - [X] The loss function
+   - [ ] The learning rate
+#+end_example
+
+Level-1 headlines (=*=) are purely organizational --- use them to
+group questions by topic or unit.  They do not appear in the exported
+quiz.
+
+** Question Types
+
+*** Multiple Choice
+
+Exactly one =[X]= among the checkboxes:
+
+#+begin_example
+,** Capital of France
+What is the capital of France?
+   - [ ] London
+   - [X] Paris
+   - [ ] Berlin
+#+end_example
+
+*** Multiple Answers
+
+Two or more =[X]= checkboxes:
+
+#+begin_example
+,** Prime Numbers
+Which of the following are prime? /Select all that apply./
+   - [X] 2
+   - [ ] 4
+   - [X] 7
+   - [ ] 9
+#+end_example
+
+*** Numerical
+
+Set ~:Type: Numerical~ with ~:Answer:~ and optional ~:Tolerance:~
+(defaults to 0):
+
+#+begin_example
+,** Simple Arithmetic
+:PROPERTIES:
+:Type: Numerical
+:Answer: 42
+:Tolerance: 0.5
+:END:
+What is 6 times 7?
+#+end_example
+
+*** Short Answer
+
+Set ~:Type: ShortAnswer~ with a plain list of accepted answers:
+
+#+begin_example
+,** Abbreviation
+:PROPERTIES:
+:Type: ShortAnswer
+:END:
+What does CPU stand for?
+   - Central Processing Unit
+   - central processing unit
+#+end_example
+
+*** Essay
+
+Set ~:Type: Essay~:
+
+#+begin_example
+,** Reflection
+:PROPERTIES:
+:Type: Essay
+:END:
+Describe your experience with the lab assignment.
+#+end_example
+
+*** File Upload
+
+Set ~:Type: Upload~:
+
+#+begin_example
+,** Submit Notebook
+:PROPERTIES:
+:Type: Upload
+:END:
+Upload your completed Jupyter notebook.
+#+end_example
+
+** Feedback
+
+Add feedback using property drawers on any question:
+
+#+begin_example
+,** Elbow Method
+:PROPERTIES:
+:Feedback: The elbow method plots WCSS against K.
+:CorrectFeedback: Correct!
+:IncorrectFeedback: Review the clustering lecture.
+:END:
+#+end_example
+
+| Property                | Shown to                              |
+|-------------------------+---------------------------------------|
+| ~:Feedback:~            | All students after grading            |
+| ~:CorrectFeedback:~     | Students who answered correctly       |
+| ~:IncorrectFeedback:~   | Students who answered incorrectly     |
+
+Per-answer feedback is also supported for MC and MA questions.  Append
+=Feedback:= after the answer text within the same list item:
+
+#+begin_example
+   - [ ] The wrong answer.
+     Feedback: This is wrong because...
+   - [X] The right answer.
+     Feedback: Exactly right.
+#+end_example
+
+** Point Values
+
+Set ~:Points:~ on individual questions.  Questions without ~:Points:~
+default to 1 point.
+
+#+begin_example
+,** Hard Question
+:PROPERTIES:
+:Points: 5
+:END:
+#+end_example
+
+** Multi-Paragraph Questions
+
+Separate paragraphs with a blank line.  They are exported with proper
+indentation for text2qti:
+
+#+begin_example
+,** Scaling
+A dataset has two features: income ($20k--$150k) and age (18--80).
+
+Why might K-Means produce misleading clusters without preprocessing?
+   - [X] Income dominates the distance calculation.
+   - [ ] K-Means requires at least three features.
+#+end_example
+
+** Excluding Content
+
+Two ways to keep content out of the exported quiz:
+
+1. *=:noexport:= tag* --- tag any headline and it (and its children)
+   will be skipped:
+
+   #+begin_example
+   ,* Instructor Notes                                          :noexport:
+   #+end_example
+
+2. *Reserved section names* --- level-1 headlines titled "Short Answer
+   Questions" or "Review Questions" are automatically skipped.  Use
+   these for in-class materials that live alongside your quiz.
+
+** Answer Grouping (Quiz Export Only)
+
+MC questions without a custom ~:Points:~ value are automatically
+placed in a text2qti =GROUP= block.  Canvas will randomly select a
+subset (up to 10) from the group for each student.  MC questions with
+custom points, and all other question types, appear as standalone
+questions.
+
+This grouping only applies to quiz export (~Q q~ / ~Q z~).  Question
+bank export always produces standalone questions.
+
+* Quiz vs Question Bank
+
+The same =.org= file can be exported as either a quiz or a question
+bank.
+
+- *Quiz* (~Q q~ / ~Q z~) --- produces a complete Canvas quiz.  The
+  =#+TITLE:= becomes the quiz title, =#+QUIZ_SHUFFLE:= is respected,
+  and MC questions are grouped for random selection.
+
+- *Question bank* (~Q b~ / ~Q B~) --- produces a pool of questions
+  that Canvas stores separately.  After importing the =.zip=, you
+  create quizzes in Canvas that pull questions from the bank.  There
+  are no GROUP blocks and no shuffle setting; the =#+TITLE:= becomes
+  the bank name.
+
+Use question banks when you want to reuse the same pool across
+multiple quizzes, or when you want Canvas to randomly select questions
+at quiz time rather than baking the selection into the export.
+
+* Example
+
+See [[file:00-demo-all-question-types.org][00-demo-all-question-types.org]] for a complete example covering
+every question type and feature.
+
+* License
+
+GPL-3.0-or-later

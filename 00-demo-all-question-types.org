@@ -1,0 +1,170 @@
+#+TITLE: Demo Quiz -- All Question Types
+#+QUIZ_SHUFFLE: yes
+
+* Instructor Notes                                                 :noexport:
+
+This file demonstrates all question types and features supported by the
+=ox-canvas-quiz.el= exporter for text2qti import into Canvas.  It is
+intended as a *quiz export* demo (~C-c C-e Q q~ or ~C-c C-e Q z~).
+See =01-demo-question-bank.org= for a question bank export demo.
+
+** Question Types
+
+| Type             | Org representation              | text2qti syntax    |
+|------------------+---------------------------------+--------------------|
+| Multiple Choice  | Checkboxes, exactly 1 ~[X]~       | ~*b)~ correct prefix |
+| Multiple Answers | Checkboxes, 2+ ~[X]~              | ~[*]~ / ~[ ]~          |
+| Numerical        | ~:Type: Numerical~ + ~:Answer:~     | ~= val +- tol~       |
+| Short Answer     | ~:Type: ShortAnswer~ + plain list | ~* accepted~         |
+| Essay            | ~:Type: Essay~                    | ~____~               |
+| File Upload      | ~:Type: Upload~                   | ~^^^^~               |
+
+** Additional Features
+
+| Feature             | Org representation                  | text2qti syntax       |
+|---------------------+-------------------------------------+-----------------------|
+| Question feedback   | ~:Feedback:~ property                 | ~... text~              |
+| Correct feedback    | ~:CorrectFeedback:~ property          | ~+ text~                |
+| Incorrect feedback  | ~:IncorrectFeedback:~ property        | ~- text~                |
+| Per-answer feedback | ~Feedback:~ continuation in item      | ~... text~ after choice |
+| Point values        | ~:Points:~ property                   | ~Points: N~             |
+| Question titles     | ~** Short Descriptive Title~ headline | ~Title: text~           |
+| Shuffle answers     | ~#+QUIZ_SHUFFLE: yes~ keyword         | ~shuffle answers: true~ |
+| Multi-paragraph     | Blank line between paragraphs       | Indented continuation |
+
+** Detection Rules
+
+- If ~:Type:~ property is set, it takes precedence over checkbox detection.
+- Otherwise, checkbox count determines MC (1 correct) vs MA (2+ correct).
+- Questions with no checkboxes and no ~:Type:~ are skipped.
+
+* Demo Quiz -- All Question Types
+
+** Basic MC
+What does K-Means minimize during training?
+   - [ ] Silhouette score.
+   - [X] Within-cluster sum of squares (WCSS).
+   - [ ] Between-cluster variance.
+   - [ ] Adjusted Rand Index.
+
+** MC with Feedback
+:PROPERTIES:
+:Feedback: The elbow method plots WCSS against K to find diminishing returns.
+:CorrectFeedback: Correct -- the elbow method helps choose K.
+:IncorrectFeedback: Review the elbow method section in the clustering lecture.
+:END:
+The "Elbow Method" is used for what purpose in K-Means clustering?
+   - [ ] To measure the algorithm's runtime.
+   - [ ] To visualize the clusters in two dimensions.
+   - [X] To help determine the optimal number of clusters (K).
+   - [ ] To select the initial centroid positions.
+
+** MC with Per-Answer Feedback
+:PROPERTIES:
+:Points: 2
+:END:
+Why can K-Means produce different results on the same data with different random seeds?
+   - [ ] K-Means randomly drops features each run.
+     Feedback: K-Means uses all features every run; it does not drop any.
+   - [ ] The algorithm uses a different distance metric each time.
+     Feedback: The distance metric (Euclidean) is fixed; only initialization varies.
+   - [X] Different initial centroid positions lead to different local minima of WCSS.
+     Feedback: Correct -- K-Means finds local optima, so initialization matters.
+   - [ ] The data is shuffled before clustering.
+     Feedback: Shuffling order does not affect distance-based assignments.
+
+** Multi-Paragraph MC
+A retail dataset has two features: annual income (ranging from $20,000 to $150,000) and number of store visits per month (ranging from 1 to 30).
+
+A data scientist runs K-Means on this dataset without any preprocessing. Why are the resulting clusters likely to be misleading?
+   - [ ] K-Means cannot handle features with different units.
+   - [X] The income feature dominates distance calculations due to its larger scale.
+   - [ ] The number of store visits is too small to cluster.
+   - [ ] K-Means requires at least three features.
+
+** Multiple Answers with Feedback
+:PROPERTIES:
+:Feedback: K-Means has known limitations around initialization and requiring K upfront.
+:END:
+Which of the following are true about K-Means? /Select all that apply./
+   - [X] It requires K to be specified in advance.
+     Feedback: Correct -- K must be chosen before running the algorithm.
+   - [ ] It guarantees finding the global optimum.
+     Feedback: K-Means finds local optima only; results depend on initialization.
+   - [X] It is sensitive to initial centroid placement.
+     Feedback: Correct -- different seeds can yield different clusterings.
+   - [ ] It can only handle numerical features without preprocessing.
+     Feedback: K-Means requires numerical input, but categorical features can be encoded.
+
+** Numerical (PCA Dimensionality)
+:PROPERTIES:
+:Type: Numerical
+:Answer: 3
+:Tolerance: 0
+:Feedback: PCA reduces dimensionality; the number of retained components becomes the new feature count.
+:END:
+A dataset has 6 features. After applying PCA and retaining components that explain 95% of the variance, 3 components remain. How many features does the transformed dataset have?
+
+** Short Answer (WCSS)
+:PROPERTIES:
+:Type: ShortAnswer
+:IncorrectFeedback: Hint -- it is also called inertia in scikit-learn.
+:END:
+What is the name of the metric that K-Means minimizes during training?
+   - WCSS
+   - Within-cluster sum of squares
+   - inertia
+
+** Essay (Feature Scaling)
+:PROPERTIES:
+:Type: Essay
+:Feedback: A strong answer will include a concrete numeric example showing how scale affects distance.
+:END:
+Explain why feature scaling is important before applying K-Means clustering. Give a concrete example where unscaled features would produce misleading clusters.
+
+** File Upload (Clustering Notebook)
+:PROPERTIES:
+:Type: Upload
+:Feedback: Make sure your notebook includes all cell outputs before uploading.
+:END:
+Upload your clustering analysis notebook (.ipynb file).
+
+** Local vs Global Optimum
+:PROPERTIES:
+:Points: 3
+:Feedback: This question tests understanding of K-Means convergence and initialization.
+:END:
+Explain what it means for K-Means to converge to a local optimum rather than a global optimum.
+
+Describe a strategy to mitigate this problem and explain how scikit-learn implements it by default.
+   - [ ] K-Means always finds the global optimum; local optima are not a concern.
+   - [ ] Use a larger value of K to avoid local optima.
+   - [X] Run K-Means multiple times with different random initializations and keep the best result.
+   - [ ] Use hierarchical clustering as a preprocessing step.
+
+* Short Answer Questions
+
+These are the existing in-class-only short answer questions.
+They are *not* exported to the =.md= file.
+
+** Question 11
+Explain in 2-3 sentences why K-Means can converge to different solutions depending on initial centroid placement.
+
+Answer:
+K-Means uses an iterative optimization that finds a local minimum of
+WCSS, not the global minimum. Different initial centroid positions
+create different Voronoi partitions in the first step, leading the
+algorithm down different optimization paths. Running K-Means multiple
+times with different seeds (as ~n_init~ does in scikit-learn) mitigates
+this by selecting the best result.
+
+* Review Questions
+
+Review questions are also *not* exported to the =.md= file.
+
+** Review 1
+Why is feature scaling important for distance-based algorithms?
+   - [ ] It reduces the number of features.
+   - [X] It prevents features with larger magnitudes from dominating distance calculations.
+   - [ ] It increases model accuracy by removing outliers.
+   - [ ] It is only needed for categorical features.
