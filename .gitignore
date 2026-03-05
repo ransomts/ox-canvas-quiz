@@ -1,0 +1,12 @@
+# Generated quiz exports
+*.md
+*.zip
+!README.md
+
+# Emacs backup/lock files
+*~
+\#*\#
+.\#*
+
+# Byte-compiled Elisp
+*.elc
