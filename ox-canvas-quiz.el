@@ -394,7 +394,7 @@ selection; all other questions are standalone."
 All questions are standalone (no GROUP blocks, no shuffle setting)."
   (let ((parts nil)
         (n 1))
-    (push (format "Question Bank Title: %s" title) parts)
+    (push (format "Quiz Title: %s" title) parts)
     (dolist (q questions)
       (push (org-canvas-quiz--format-standalone n q) parts)
       (setq n (1+ n)))

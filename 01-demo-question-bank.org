@@ -5,12 +5,11 @@
 This file demonstrates question bank export with =ox-canvas-quiz.el=.
 Export with ~C-c C-e Q b~ (=.md=) or ~C-c C-e Q B~ (=.zip=).
 
-The =#+TITLE:= becomes the question bank name in Canvas.  After
-importing the =.zip=, create a quiz in Canvas and add question groups
-that pull from this bank.
+The =#+TITLE:= becomes the bank name in Canvas.  After importing the
+=.zip=, Canvas creates both a quiz and a corresponding question bank.
+You can then build new quizzes that pull from that bank.
 
 Unlike quiz export, question bank export:
-- Uses =Question Bank Title:= instead of =Quiz Title:=
 - Produces all questions as standalone (no GROUP blocks)
 - Ignores =#+QUIZ_SHUFFLE:= (shuffle is configured per-quiz in Canvas)
 

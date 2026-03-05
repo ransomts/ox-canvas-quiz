@@ -33,7 +33,7 @@ The export pipeline is a linear transformation: **Org parse tree → question pl
 3. **Type detection** (`org-canvas-quiz--question-type`): Checks `:Type:` property first (Numerical, ShortAnswer, Essay, Upload), then falls back to checkbox counting (1 correct = MC, 2+ = MA).
 4. **Formatting**: Two output paths diverge here:
    - `org-canvas-quiz--format-output` (quiz): MC questions without custom points go into a `GROUP` block for random selection; everything else is standalone. Uses `Quiz Title:`.
-   - `org-canvas-quiz--format-bank-output` (question bank): All questions are standalone (no GROUP, no shuffle). Uses `Question Bank Title:`.
+   - `org-canvas-quiz--format-bank-output` (question bank): All questions are standalone (no GROUP, no shuffle). Still uses `Quiz Title:` since text2qti has no native bank support; Canvas auto-creates a question bank from the imported quiz.
 
 ## Org File Conventions
 

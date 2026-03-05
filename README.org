@@ -272,13 +272,13 @@ bank.
   =#+TITLE:= becomes the quiz title, =#+QUIZ_SHUFFLE:= is respected,
   and MC questions are grouped for random selection.
 
-- *Question bank* (~Q b~ / ~Q B~) --- produces a pool of questions
-  that Canvas stores separately.  After importing the =.zip=, you
-  create quizzes in Canvas that pull questions from the bank.  There
-  are no GROUP blocks and no shuffle setting; the =#+TITLE:= becomes
-  the bank name.
+- *Question bank* (~Q b~ / ~Q B~) --- exports all questions as
+  standalone (no GROUP blocks, no shuffle).  When you import the
+  =.zip= into Canvas, it creates a quiz /and/ a corresponding
+  question bank automatically.  You can then build new quizzes that
+  pull from that bank.  The =#+TITLE:= becomes the bank name.
 
-Use question banks when you want to reuse the same pool across
+Use question bank export when you want to reuse the same pool across
 multiple quizzes, or when you want Canvas to randomly select questions
 at quiz time rather than baking the selection into the export.
 
