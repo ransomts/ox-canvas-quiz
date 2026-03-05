@@ -18,11 +18,31 @@ grouping, and multi-paragraph indentation automatically.
 
 * Installation
 
-Copy =ox-canvas-quiz.el= somewhere on your ~load-path~ and add to
-your init file:
+Clone the repository:
+
+#+begin_src sh
+git clone https://github.com/ransomts/ox-canvas-quiz.git
+#+end_src
+
+Then add it to your ~load-path~ and load it:
 
 #+begin_src elisp
+(add-to-list 'load-path "/path/to/ox-canvas-quiz")
 (require 'ox-canvas-quiz)
+#+end_src
+
+Or with ~use-package~ and a local path:
+
+#+begin_src elisp
+(use-package ox-canvas-quiz
+  :load-path "/path/to/ox-canvas-quiz")
+#+end_src
+
+Or with ~use-package~ and ~:vc~ (Emacs 30+):
+
+#+begin_src elisp
+(use-package ox-canvas-quiz
+  :vc (:url "https://github.com/ransomts/ox-canvas-quiz"))
 #+end_src
 
 * Quick Start
@@ -289,4 +309,4 @@ every question type and feature.
 
 * License
 
-GPL-3.0-or-later
+GPL-3.0-or-later.  See [[file:LICENSE][LICENSE]] for the full text.
